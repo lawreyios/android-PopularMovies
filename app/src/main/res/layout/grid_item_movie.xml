@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/medium_vertical_spacing"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:minHeight="?android:attr/listPreferredItemHeight">
+
+    <ImageView
+        android:id="@+id/grid_item_image"
+        android:layout_width="150dp"
+        android:layout_height="200dp"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/medium_vertical_spacing"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/grid_item_title"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/medium_vertical_spacing"
+            android:textSize="@dimen/h1"
+            android:maxLines="1"
+            android:textAlignment="center"
+            android:ellipsize="end"
+            android:text="_movie_title" />
+
+
+        <TextView
+            android:id="@+id/grid_item_release_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_vertical_spacing"
+            android:textSize="@dimen/h2"
+            android:textAlignment="center"
+            android:text="_movie_release_date" />
+
+        <TextView
+            android:id="@+id/grid_item_vote_average"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/h2"
+            android:textAlignment="center"
+            android:text="_movie_vote_average" />
+
+        <TextView
+            android:id="@+id/grid_item_plot_synopsis"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/medium_vertical_spacing"
+            android:textSize="@dimen/h3"
+            android:textAlignment="center"
+            android:maxLines="3"
+            android:ellipsize="end"
+            android:text="_movie_plot_synopsis" />
+
+    </LinearLayout>
+
+</LinearLayout>
