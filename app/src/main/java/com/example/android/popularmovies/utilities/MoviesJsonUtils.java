@@ -1,11 +1,5 @@
 package com.example.android.popularmovies.utilities;
 
-/**
- * Created by Lawrey on 18/9/17.
- */
-
-import android.content.Context;
-
 import com.example.android.popularmovies.Movie;
 
 import org.json.JSONArray;
@@ -20,7 +14,7 @@ import java.net.HttpURLConnection;
 
 public class MoviesJsonUtils {
 
-    public static Movie[] getMoviesFromJSON(Context context, String moviesJSONStr)
+    public static Movie[] getMoviesFromJSON(String moviesJSONStr)
         throws JSONException {
 
         /* Movies List. Each movie's info is an element of the "results" array */
@@ -39,7 +33,7 @@ public class MoviesJsonUtils {
         final String MDB_IMAGE_WIDTH_PATH = "/w185";
 
         /* Movie array to hold each movie's object */
-        Movie[] parsedMovieData = null;
+        Movie[] parsedMovieData;
 
         JSONObject moviesJSON = new JSONObject(moviesJSONStr);
 

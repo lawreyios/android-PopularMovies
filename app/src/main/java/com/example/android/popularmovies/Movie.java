@@ -1,15 +1,14 @@
 package com.example.android.popularmovies;
 
-/**
- * Created by Lawrey on 18/9/17.
- */
+import java.io.Serializable;
 
-public class Movie {
-    String title;
-    double vote_average;
-    String image_url;
-    String release_date;
-    String plot_synopsis;
+@SuppressWarnings("DefaultFileTemplate")
+public class Movie implements Serializable {
+    final String title;
+    final double vote_average;
+    final String image_url;
+    final String release_date;
+    final String plot_synopsis;
 
     public Movie(String title, double vote_average, String image_url, String release_date, String plot_synopsis) {
         this.title = title;

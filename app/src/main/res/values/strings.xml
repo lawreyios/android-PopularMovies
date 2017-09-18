@@ -8,4 +8,14 @@
     <string name="most_popular">Most Popular</string>
     <string name="top_rated">Top Rated</string>
 
+    <string name="poster_image">Movie Poster</string>
+
+    <string name="default_movie_title">_movie_title</string>
+    <string name="default_movie_release_date">_movie_release_date</string>
+    <string name="default_movie_vote_average">_movie_vote_average</string>
+    <string name="default_movie_synopsis">_movie_synopsis</string>
+
+    <string name="movie_release_date">Release Date: %1$s</string>
+    <string name="movie_average_vote">Ratings: %1$s</string>
+
 </resources>

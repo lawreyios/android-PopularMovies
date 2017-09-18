@@ -1,18 +1,16 @@
 package com.example.android.popularmovies;
 
-import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.popularmovies.utilities.MoviesJsonUtils;
 import com.example.android.popularmovies.utilities.NetworkUtils;
@@ -91,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         return super.onOptionsItemSelected(item);
     }
 
-    public class FetchMoviesTask extends AsyncTask<SortType, Void, Movie[]> {
+    private class FetchMoviesTask extends AsyncTask<SortType, Void, Movie[]> {
 
         @Override
         protected void onPreExecute() {
@@ -113,9 +111,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             try {
                 String moviesResponseJSON = NetworkUtils.getResponseFromHttpUrl(moviesRequestUrl);
 
-                Movie[] moviesData = MoviesJsonUtils.getMoviesFromJSON(MainActivity.this, moviesResponseJSON);
-
-                return moviesData;
+                return MoviesJsonUtils.getMoviesFromJSON(moviesResponseJSON);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -151,8 +147,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     @Override
     public void onClick(Movie movie) {
-        Log.v("Test", "Test");
-        Toast.makeText(this, movie.title, Toast.LENGTH_SHORT)
-                .show();
+        Intent i = new Intent(this, MovieDetails.class);
+        i.putExtra("Movie", movie);
+
+        startActivity(i);
     }
 }
