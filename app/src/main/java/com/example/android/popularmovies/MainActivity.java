@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         sortType = SortType.MOSTPOPULAR;
 
+        setTitle(getText(R.string.most_popular));
+
         loadMoviesData();
     }
 
@@ -71,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         if (id == R.id.action_most_popular) {
             sortType = SortType.MOSTPOPULAR;
+            setTitle(getText(R.string.most_popular));
             mMovieAdapter.setMoviesData(null);
             loadMoviesData();
             return true;
@@ -78,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         if (id == R.id.action_highest_rated) {
             sortType = SortType.TOPRATED;
+            setTitle(getText(R.string.top_rated));
             mMovieAdapter.setMoviesData(null);
             loadMoviesData();
             return true;
@@ -146,8 +151,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     @Override
     public void onClick(Movie movie) {
-        Context context = this;
-        Toast.makeText(context, movie.title, Toast.LENGTH_SHORT)
+        Log.v("Test", "Test");
+        Toast.makeText(this, movie.title, Toast.LENGTH_SHORT)
                 .show();
     }
 }

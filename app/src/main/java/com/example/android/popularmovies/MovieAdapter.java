@@ -25,7 +25,7 @@ import static android.R.attr.resource;
  * Created by Lawrey on 18/9/17.
  */
 
-public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
+public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
     private static final String LOG_TAG = MovieAdapter.class.getSimpleName();
 
     private Movie[] mMoviesData;
@@ -41,37 +41,46 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     }
 
     public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public final TextView mMovieTitleTextView;
+        private TextView titleView;
+        private TextView releaseDateView;
+        private TextView voteAverageView;
+        private ImageView posterImageView;
+        private TextView synopsisView;
 
         public MovieAdapterViewHolder(View view) {
             super(view);
-            mMovieTitleTextView = (TextView) view.findViewById(R.id.grid_item_title);
-            // COMPLETED (7) Call setOnClickListener on the view passed into the constructor (use 'this' as the OnClickListener)
+
+            titleView = (TextView)view.findViewById(R.id.grid_item_title);
+            releaseDateView = (TextView)view.findViewById(R.id.grid_item_release_date);
+            voteAverageView = (TextView)view.findViewById(R.id.grid_item_vote_average);
+            posterImageView = (ImageView) view.findViewById(R.id.grid_item_image);
+            synopsisView = (TextView)view.findViewById(R.id.grid_item_plot_synopsis);
+
             view.setOnClickListener(this);
         }
 
-        // COMPLETED (6) Override onClick, passing the clicked day's data to mClickHandler via its onClick method
-        /**
-         * This gets called by the child views during a click.
-         *
-         * @param v The View that was clicked
-         */
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            Movie movie= mMoviesData[adapterPosition];
+            Movie movie = mMoviesData[adapterPosition];
             mClickHandler.onClick(movie);
         }
     }
 
     @Override
-    public MovieAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.grid_item_movie, viewGroup, false);
-        return new ViewHolder(view);
+    public MovieAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        Context context = viewGroup.getContext();
+        int layoutIdForListItem = R.layout.grid_item_movie;
+        LayoutInflater inflater = LayoutInflater.from(context);
+        boolean shouldAttachToParentImmediately = false;
+
+        View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
+
+        return new MovieAdapterViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(MovieAdapter.ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(MovieAdapterViewHolder viewHolder, int i) {
         Movie movie = mMoviesData[i];
 
         Picasso.with(viewHolder.itemView.getContext()).load(movie.image_url).into(viewHolder.posterImageView);
@@ -89,24 +98,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     public int getItemCount() {
         if (null == mMoviesData) return 0;
         return mMoviesData.length;
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        private TextView titleView;
-        private TextView releaseDateView;
-        private TextView voteAverageView;
-        private ImageView posterImageView;
-        private TextView synopsisView;
-
-        public ViewHolder(View view) {
-            super(view);
-
-            titleView = (TextView)view.findViewById(R.id.grid_item_title);
-            releaseDateView = (TextView)view.findViewById(R.id.grid_item_release_date);
-            voteAverageView = (TextView)view.findViewById(R.id.grid_item_vote_average);
-            posterImageView = (ImageView) view.findViewById(R.id.grid_item_image);
-            synopsisView = (TextView)view.findViewById(R.id.grid_item_plot_synopsis);
-        }
     }
 
     public void setMoviesData(Movie[] moviesData) {
