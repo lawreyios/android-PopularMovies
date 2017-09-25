@@ -27,17 +27,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     }
 
     public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private final TextView titleView;
-        private final TextView releaseDateView;
-        private final TextView voteAverageView;
         private final ImageView posterImageView;
 
         public MovieAdapterViewHolder(View view) {
             super(view);
 
-            titleView = view.findViewById(R.id.grid_item_title);
-            releaseDateView = view.findViewById(R.id.grid_item_release_date);
-            voteAverageView = view.findViewById(R.id.grid_item_vote_average);
             posterImageView = view.findViewById(R.id.grid_item_image);
 
             view.setOnClickListener(this);
@@ -67,14 +61,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         Movie movie = mMoviesData[i];
 
         Picasso.with(viewHolder.itemView.getContext()).load(movie.image_url).into(viewHolder.posterImageView);
-
-        viewHolder.titleView.setText(movie.title);
-        String releaseDateText = viewHolder.itemView.getContext().getString(R.string.movie_release_date, movie.release_date);
-        viewHolder.releaseDateView.setText(releaseDateText);
-
-        String voteAverage = String.valueOf(movie.vote_average);
-        String voteAverageText = viewHolder.itemView.getContext().getString(R.string.movie_average_vote, voteAverage);
-        viewHolder.voteAverageView.setText(voteAverageText);
     }
 
     @Override

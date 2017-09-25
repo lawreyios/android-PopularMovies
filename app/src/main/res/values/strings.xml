@@ -5,8 +5,8 @@
         An error has occurred. Please try again by clicking REFRESH
     </string>
 
-    <string name="most_popular">Most Popular</string>
-    <string name="top_rated">Top Rated</string>
+    <string name="most_popular">Popular Movies</string>
+    <string name="top_rated">Top Movies</string>
     <string name="favourites">Favourites</string>
 
     <string name="poster_image">Movie Poster</string>
