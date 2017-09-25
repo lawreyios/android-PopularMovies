@@ -21,6 +21,7 @@ public class MoviesJsonUtils {
         final String MDB_RESULTS = "results";
 
         /* Movies Info. Parameters Needed */
+        final String MDB_ID = "id";
         final String MDB_VOTE_AVERAGE = "vote_average";
         final String MDB_TITLE = "title";
         final String MDB_POSTER_PATH = "poster_path";
@@ -63,6 +64,7 @@ public class MoviesJsonUtils {
             String posterPath;
             String overview;
             String releaseDate;
+            String movie_id;
 
             /* Get the JSON object representing the movie */
             JSONObject movie = moviesArray.getJSONObject(i);
@@ -72,10 +74,11 @@ public class MoviesJsonUtils {
             posterPath = movie.getString(MDB_POSTER_PATH);
             overview = movie.getString(MDB_OVERVIEW);
             releaseDate = movie.getString(MDB_RELEASE_DATE);
+            movie_id = movie.getString(MDB_ID);
 
             String imageUrl = MDB_BASE_IMAGE_URL + MDB_IMAGE_WIDTH_PATH + posterPath;
 
-            parsedMovieData[i] = new Movie(title, voteAverage, imageUrl, releaseDate, overview);
+            parsedMovieData[i] = new Movie(title, voteAverage, imageUrl, releaseDate, overview, movie_id);
         }
 
         return parsedMovieData;

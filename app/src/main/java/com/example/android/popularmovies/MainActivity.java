@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -83,6 +84,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             setTitle(getText(R.string.top_rated));
             mMovieAdapter.setMoviesData(null);
             loadMoviesData();
+            return true;
+        }
+
+        if (id == R.id.action_favourites) {
+            Log.v("onOptionsItemSelected", "Load Favourites");
             return true;
         }
 
