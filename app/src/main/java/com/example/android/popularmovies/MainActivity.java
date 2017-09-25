@@ -58,6 +58,16 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         loadMoviesData();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (sortType == SortType.FAVOURITES) {
+            Movie[] moviesData = getFavouritedMovies();
+            mMovieAdapter.setMoviesData(moviesData);
+            showMoviesDataView();
+        }
+    }
+
     private void loadMoviesData() {
         showMoviesDataView();
 
@@ -91,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         }
 
         if (id == R.id.action_favourites) {
+            sortType = SortType.FAVOURITES;
             setTitle(getText(R.string.favourites));
             Movie[] moviesData = getFavouritedMovies();
             mMovieAdapter.setMoviesData(moviesData);
