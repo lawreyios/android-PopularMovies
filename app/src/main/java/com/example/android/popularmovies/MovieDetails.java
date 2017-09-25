@@ -11,10 +11,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.popularmovies.data.MoviesContract;
-import com.example.android.popularmovies.utilities.SortType;
 import com.squareup.picasso.Picasso;
 
 public class MovieDetails extends AppCompatActivity {

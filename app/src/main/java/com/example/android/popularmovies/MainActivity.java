@@ -1,6 +1,7 @@
 package com.example.android.popularmovies;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,11 +14,13 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.android.popularmovies.data.MoviesContract;
 import com.example.android.popularmovies.utilities.MoviesJsonUtils;
 import com.example.android.popularmovies.utilities.NetworkUtils;
 import com.example.android.popularmovies.utilities.SortType;
 
 import java.net.URL;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
 
@@ -88,7 +91,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         }
 
         if (id == R.id.action_favourites) {
-            Log.v("onOptionsItemSelected", "Load Favourites");
+            setTitle(getText(R.string.favourites));
+            Movie[] moviesData = getFavouritedMovies();
+            mMovieAdapter.setMoviesData(moviesData);
+            showMoviesDataView();
             return true;
         }
 
@@ -157,5 +163,35 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         i.putExtra("Movie", movie);
 
         startActivity(i);
+    }
+
+    public Movie[] getFavouritedMovies() {
+        ArrayList<Movie> favouritedMovies;
+
+        Cursor cursor = this.getContentResolver().query(MoviesContract.MoviesEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
+
+        favouritedMovies = new ArrayList<Movie>();
+
+        while (cursor.moveToNext()) {
+            String title = cursor.getString(cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_TITLE));
+            String poster = cursor.getString(cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_POSTER));
+            double ratings = cursor.getDouble(cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_RATINGS));
+            String movie_id = cursor.getString(cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_MOVIE_ID));
+            String release = cursor.getString(cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_RELEASE));
+            String synopsis = cursor.getString(cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_SYNOPSIS));
+
+            Movie movie = new Movie(title, ratings, poster, release, synopsis, movie_id);
+
+            favouritedMovies.add(movie);
+        }
+
+        Movie[] movies = favouritedMovies.toArray(new Movie[favouritedMovies.size()]);
+        favouritedMovies.toArray(movies);
+
+        return movies;
     }
 }
