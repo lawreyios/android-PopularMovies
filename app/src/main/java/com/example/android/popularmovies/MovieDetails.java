@@ -2,6 +2,7 @@ package com.example.android.popularmovies;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,11 @@ import android.widget.TextView;
 
 import com.example.android.popularmovies.data.MoviesContract;
 import com.squareup.picasso.Picasso;
+
+import java.text.ParseException;
+import java.util.Date;
+
+import static android.R.attr.format;
 
 public class MovieDetails extends AppCompatActivity {
 
@@ -34,13 +40,31 @@ public class MovieDetails extends AppCompatActivity {
         setTitle(mSelectedMovie.title);
 
         TextView mReleaseDateTextView = (TextView) findViewById(R.id.tv_details_release_date);
-        String releaseDateText = this.getString(R.string.movie_release_date, mSelectedMovie.release_date);
+        String releaseDateText = mSelectedMovie.release_date;
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date releaseDate = null;
+
+        try {
+            releaseDate = format.parse(releaseDateText);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        format = new SimpleDateFormat("dd MMM yyyy");
+
+        if (releaseDate == null)
+            releaseDateText = "Not available yet";
+        else
+            releaseDateText = format.format(releaseDate).toString();
+
+        releaseDateText = this.getString(R.string.movie_release_date, releaseDateText);
         mReleaseDateTextView.setText(releaseDateText);
 
         TextView mVoteAverageTextView = (TextView) findViewById(R.id.tv_details_vote_average);
         String voteAverage = String.valueOf(mSelectedMovie.vote_average);
         String voteAverageText = this.getString(R.string.movie_average_vote, voteAverage);
-        mVoteAverageTextView.setText(voteAverageText);
+        mVoteAverageTextView.setText(voteAverageText + "/10");
 
         ImageView mPosterImageView = (ImageView) findViewById(R.id.iv_details_poster);
         Picasso.with(this).load(mSelectedMovie.image_url).into(mPosterImageView);

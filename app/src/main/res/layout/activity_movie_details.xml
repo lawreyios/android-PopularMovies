@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,51 +10,77 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/medium_vertical_spacing"
-        android:paddingLeft="@dimen/default_padding"
-        android:paddingRight="@dimen/default_padding"
-        android:paddingBottom="@dimen/default_padding"
-        android:paddingTop="@dimen/default_padding"
-        android:layout_gravity="center"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/iv_details_poster"
-            android:layout_width="300dp"
-            android:layout_height="400dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/medium_vertical_spacing"
-            android:contentDescription="@string/poster_image"
-            />
-
-        <TextView
-            android:id="@+id/tv_details_release_date"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/small_vertical_spacing"
-            android:textSize="@dimen/h2"
-            android:textAlignment="center"
-            android:layout_gravity="center"
-            android:text="@string/default_movie_title" />
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tv_details_vote_average"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/h2"
-            android:textAlignment="center"
-            android:layout_gravity="center"
-            android:text="@string/default_movie_vote_average" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/medium_vertical_spacing"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/default_padding"
+                android:paddingLeft="@dimen/default_padding"
+                android:paddingRight="@dimen/medium_vertical_spacing"
+                android:paddingTop="@dimen/default_padding">
+
+                <ImageView
+                    android:id="@+id/iv_details_poster"
+                    android:layout_width="130dp"
+                    android:layout_height="180dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="@dimen/medium_vertical_spacing"
+                    android:contentDescription="@string/poster_image" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_details_release_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginTop="@dimen/small_vertical_spacing"
+                    android:paddingTop="18dp"
+                    android:text="@string/default_movie_release_date"
+                    android:textSize="@dimen/h2" />
+
+                <TextView
+                    android:id="@+id/tv_details_vote_average"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:text="@string/default_movie_vote_average"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/h2" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tv_details_synopsis"
-            android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginLeft="@dimen/large_vertical_spacing"
+            android:layout_marginTop="@dimen/medium_vertical_spacing"
+            android:text="@string/default_movie_synopsis"
+            android:textSize="@dimen/h2" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
             android:layout_marginTop="@dimen/large_vertical_spacing"
-            android:textSize="@dimen/h2"
-            android:textAlignment="center"
-            android:text="@string/default_movie_synopsis" />
+            android:background="@color/colorPrimaryDark" />
 
     </LinearLayout>
 
