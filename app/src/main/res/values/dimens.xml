@@ -1,6 +1,7 @@
 <resources>
 
     <!-- Default spacings. -->
+    <dimen name="xlarge_vertical_spacing">24dp</dimen>
     <dimen name="large_vertical_spacing">16dp</dimen>
     <dimen name="medium_vertical_spacing">8dp</dimen>
     <dimen name="small_vertical_spacing">4dp</dimen>

@@ -1,27 +1,40 @@
 package com.example.android.popularmovies;
 
+import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.android.popularmovies.data.MoviesContract;
+import com.example.android.popularmovies.utilities.MoviesJsonUtils;
+import com.example.android.popularmovies.utilities.NetworkUtils;
+import com.example.android.popularmovies.utilities.SortType;
+import com.example.android.popularmovies.utilities.TrailersJsonUtils;
 import com.squareup.picasso.Picasso;
 
+import java.net.URL;
 import java.text.ParseException;
 import java.util.Date;
 
 import static android.R.attr.format;
 
-public class MovieDetails extends AppCompatActivity {
+public class MovieDetails extends AppCompatActivity implements TrailerAdapter.TrailerAdapterOnClickHandler {
 
     private static final String TAG = MovieDetails.class.getSimpleName();
 
@@ -30,10 +43,28 @@ public class MovieDetails extends AppCompatActivity {
     private boolean mIsFavourited = false;
     private int mFavouriteIcon;
 
+    private RecyclerView mTrailersRecyclerView;
+    private TrailerAdapter mTrailerAdapter;
+
+    private ScrollView mScrollView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
+
+        mScrollView = (ScrollView) findViewById(R.id.sv_movie_details);
+
+        mTrailersRecyclerView = (RecyclerView) findViewById(R.id.rv_trailers);
+
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+
+        mTrailersRecyclerView.setLayoutManager(layoutManager);
+
+        mTrailerAdapter = new TrailerAdapter(this);
+
+        mTrailersRecyclerView.setAdapter(mTrailerAdapter);
 
         mSelectedMovie = (Movie) getIntent().getSerializableExtra("Movie");
 
@@ -75,6 +106,8 @@ public class MovieDetails extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         checkIfMovieIsFavourited();
+
+        loadMovieTrailers();
     }
 
     @Override
@@ -172,5 +205,62 @@ public class MovieDetails extends AppCompatActivity {
         return null;
     }
 
+    private void loadMovieTrailers() {
+        new FetchTrailersTask().execute(mSelectedMovie.movie_id);
+    }
 
+    private class FetchTrailersTask extends AsyncTask<String, Void, Trailer[]> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Trailer[] doInBackground(String... params) {
+
+            /* Must provide a sort type */
+            if (params.length == 0) {
+                return null;
+            }
+
+            String movieId = params[0];
+            URL trailersRequestUrl = NetworkUtils.buildVideoUrl(movieId);
+
+            try {
+                String trailersResponseJSON = NetworkUtils.getResponseFromHttpUrl(trailersRequestUrl);
+
+                return TrailersJsonUtils.getTrailersFromJSON(trailersResponseJSON);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Trailer[] trailersData) {
+            if (trailersData != null) {
+                mScrollView.invalidate();
+                mTrailerAdapter.setmTrailersData(trailersData);
+                mScrollView.requestLayout();
+            }
+        }
+    }
+
+    @Override
+    public void onClick(Trailer trailer) {
+        watchYoutubeVideo(trailer.key);
+    }
+
+    public void watchYoutubeVideo(String id){
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
+        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://www.youtube.com/watch?v=" + id));
+        try {
+            startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            startActivity(webIntent);
+        }
+    }
 }

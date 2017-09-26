@@ -15,8 +15,11 @@
     <string name="default_movie_release_date">_movie_release_date</string>
     <string name="default_movie_vote_average">_movie_vote_average</string>
     <string name="default_movie_synopsis">_movie_synopsis</string>
+    <string name="default_movie_trailer">_movie_trailer</string>
 
     <string name="movie_release_date">Release Date: %1$s</string>
     <string name="movie_average_vote">Ratings: %1$s</string>
+
+    <string name="movie_trailer_title">Trailers:</string>
 
 </resources>

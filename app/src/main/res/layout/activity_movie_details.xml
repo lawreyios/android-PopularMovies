@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sv_movie_details"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:orientation="vertical"
     tools:context="com.example.android.popularmovies.MovieDetails">
@@ -81,6 +82,31 @@
             android:layout_height="1dp"
             android:layout_marginTop="@dimen/large_vertical_spacing"
             android:background="@color/colorPrimaryDark" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginLeft="@dimen/large_vertical_spacing"
+            android:layout_marginTop="@dimen/medium_vertical_spacing"
+            android:text="@string/movie_trailer_title"
+            android:textSize="@dimen/h1" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_trailers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_vertical_spacing"
+            android:paddingLeft="@dimen/large_vertical_spacing"
+            android:paddingRight="@dimen/large_vertical_spacing"
+
+            />
+        </RelativeLayout>
 
     </LinearLayout>
 
