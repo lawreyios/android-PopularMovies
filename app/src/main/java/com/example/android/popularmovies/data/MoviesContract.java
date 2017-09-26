@@ -7,11 +7,12 @@ import android.provider.BaseColumns;
  * Created by Lawrey on 25/9/17.
  */
 
+@SuppressWarnings("ALL")
 public class MoviesContract {
 
     public static final String CONTENT_AUTHORITY = "com.example.android.popularmovies";
 
-    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+    private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     public static final String PATH_MOVIES = "movies";
 

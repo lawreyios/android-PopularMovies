@@ -1,15 +1,10 @@
 package com.example.android.popularmovies.utilities;
 
-import com.example.android.popularmovies.Movie;
 import com.example.android.popularmovies.Trailer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.net.HttpURLConnection;
-
-import static android.R.attr.id;
 
 /**
  * Created by Lawrey on 26/9/17.

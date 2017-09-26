@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         startActivity(i);
     }
 
-    public Movie[] getFavouritedMovies() {
+    private Movie[] getFavouritedMovies() {
         ArrayList<Movie> favouritedMovies;
 
         Cursor cursor = this.getContentResolver().query(MoviesContract.MoviesEntry.CONTENT_URI,
@@ -184,9 +184,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 null,
                 null);
 
-        favouritedMovies = new ArrayList<Movie>();
+        favouritedMovies = new ArrayList<>();
 
-        while (cursor.moveToNext()) {
+        while (cursor.moveToNext() && cursor != null) {
             String title = cursor.getString(cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_TITLE));
             String poster = cursor.getString(cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_POSTER));
             double ratings = cursor.getDouble(cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_RATINGS));
@@ -201,6 +201,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         Movie[] movies = favouritedMovies.toArray(new Movie[favouritedMovies.size()]);
         favouritedMovies.toArray(movies);
+
+        cursor.close();
 
         return movies;
     }

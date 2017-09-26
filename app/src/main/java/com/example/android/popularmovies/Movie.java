@@ -3,6 +3,7 @@ package com.example.android.popularmovies;
 import java.io.Serializable;
 
 @SuppressWarnings("DefaultFileTemplate")
+
 public class Movie implements Serializable {
     final String title;
     final double vote_average;

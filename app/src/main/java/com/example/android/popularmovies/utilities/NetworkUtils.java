@@ -19,10 +19,11 @@ public final class NetworkUtils {
     private final static String POPULAR_PATH = "popular";
     private final static String TOP_RATED_PATH = "top_rated";
     private final static String VIDEOS_PATH = "videos";
+    private final static String REVIEWS_PATH = "reviews";
     private final static String API_KEY_PARAM = "api_key";
 
     //TODO: Add your own API_KEY from MoviesDB
-    private final static String API_KEY = "ad4ffb49ab5d292de1cd561c5ff9fb71";
+    private final static String API_KEY = "API_KEY";
 
     public static URL buildUrl(SortType sortType) {
         String path = sortType == SortType.MOSTPOPULAR ? POPULAR_PATH : TOP_RATED_PATH;
@@ -47,6 +48,25 @@ public final class NetworkUtils {
         Uri builtUri = Uri.parse(BASE_MOVIESDB_URL).buildUpon()
                 .appendPath(movieId)
                 .appendPath(VIDEOS_PATH)
+                .appendQueryParameter(API_KEY_PARAM, API_KEY)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        Log.v(TAG, "Built URI " + url);
+
+        return url;
+    }
+
+    public static URL buildReviewUrl(String movieId) {
+        Uri builtUri = Uri.parse(BASE_MOVIESDB_URL).buildUpon()
+                .appendPath(movieId)
+                .appendPath(REVIEWS_PATH)
                 .appendQueryParameter(API_KEY_PARAM, API_KEY)
                 .build();
 

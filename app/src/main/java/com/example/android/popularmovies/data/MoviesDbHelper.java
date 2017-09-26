@@ -6,15 +6,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import static android.R.attr.version;
 
-/**
- * Created by Lawrey on 25/9/17.
- */
+class MoviesDbHelper extends SQLiteOpenHelper {
 
-public class MoviesDbHelper extends SQLiteOpenHelper {
-
-    public static final String DATABASE_NAME = "movies.db";
-
-    private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "movies.db";
 
     public MoviesDbHelper(Context context) {
         super(context, DATABASE_NAME, null, version);

@@ -10,23 +10,22 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import static android.R.attr.name;
-import static com.example.android.popularmovies.data.MoviesContract.MoviesEntry.COLUMN_MOVIE_ID;
 import static com.example.android.popularmovies.data.MoviesContract.MoviesEntry.TABLE_NAME;
 
 /**
  * Created by Lawrey on 25/9/17.
  */
 
+@SuppressWarnings("DefaultFileTemplate")
 public class MoviesProvider extends ContentProvider {
 
-    public static final int CODE_MOVIES = 100;
-    public static final int CODE_MOVIES_ID = 101;
+    private static final int CODE_MOVIES = 100;
+    private static final int CODE_MOVIES_ID = 101;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private MoviesDbHelper mOpenHelper;
 
-    public static UriMatcher buildUriMatcher() {
+    private static UriMatcher buildUriMatcher() {
 
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = MoviesContract.CONTENT_AUTHORITY;

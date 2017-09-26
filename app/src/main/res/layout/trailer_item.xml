@@ -13,15 +13,16 @@
         <ImageView
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginLeft="@dimen/medium_vertical_spacing"
+            android:layout_marginStart="@dimen/medium_vertical_spacing"
+            android:contentDescription="Trailer_icon"
             android:background="@drawable/clapper" />
 
         <TextView
             android:id="@+id/tv_trailer_name"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/xlarge_vertical_spacing"
-            android:gravity="left|center"
+            android:layout_marginStart="@dimen/xlarge_vertical_spacing"
+            android:gravity="start|center"
             android:text="@string/default_movie_trailer" />
 
     </LinearLayout>

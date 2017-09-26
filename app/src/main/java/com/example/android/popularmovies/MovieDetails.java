@@ -10,21 +10,18 @@ import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.android.popularmovies.data.MoviesContract;
-import com.example.android.popularmovies.utilities.MoviesJsonUtils;
 import com.example.android.popularmovies.utilities.NetworkUtils;
-import com.example.android.popularmovies.utilities.SortType;
+import com.example.android.popularmovies.utilities.ReviewsJsonUtils;
 import com.example.android.popularmovies.utilities.TrailersJsonUtils;
 import com.squareup.picasso.Picasso;
 
@@ -32,9 +29,8 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.Date;
 
-import static android.R.attr.format;
-
-public class MovieDetails extends AppCompatActivity implements TrailerAdapter.TrailerAdapterOnClickHandler {
+public class MovieDetails extends AppCompatActivity
+        implements TrailerAdapter.TrailerAdapterOnClickHandler, ReviewAdapter.ReviewAdapterOnClickHandler {
 
     private static final String TAG = MovieDetails.class.getSimpleName();
 
@@ -46,6 +42,9 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
     private RecyclerView mTrailersRecyclerView;
     private TrailerAdapter mTrailerAdapter;
 
+    private RecyclerView mReviewsRecyclerView;
+    private ReviewAdapter mReviewAdapter;
+
     private ScrollView mScrollView;
 
     @Override
@@ -56,18 +55,24 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
         mScrollView = (ScrollView) findViewById(R.id.sv_movie_details);
 
         mTrailersRecyclerView = (RecyclerView) findViewById(R.id.rv_trailers);
+        mReviewsRecyclerView = (RecyclerView) findViewById(R.id.rv_reviews);
 
-        LinearLayoutManager layoutManager =
+        LinearLayoutManager trailersLayoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
 
-        mTrailersRecyclerView.setLayoutManager(layoutManager);
+        mTrailersRecyclerView.setLayoutManager(trailersLayoutManager);
+
+        LinearLayoutManager reviewsLayoutManager =
+                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mReviewsRecyclerView.setLayoutManager(reviewsLayoutManager);
 
         mTrailerAdapter = new TrailerAdapter(this);
+        mReviewAdapter = new ReviewAdapter(this);
 
         mTrailersRecyclerView.setAdapter(mTrailerAdapter);
+        mReviewsRecyclerView.setAdapter(mReviewAdapter);
 
         mSelectedMovie = (Movie) getIntent().getSerializableExtra("Movie");
-
         setTitle(mSelectedMovie.title);
 
         TextView mReleaseDateTextView = (TextView) findViewById(R.id.tv_details_release_date);
@@ -95,7 +100,7 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
         TextView mVoteAverageTextView = (TextView) findViewById(R.id.tv_details_vote_average);
         String voteAverage = String.valueOf(mSelectedMovie.vote_average);
         String voteAverageText = this.getString(R.string.movie_average_vote, voteAverage);
-        mVoteAverageTextView.setText(voteAverageText + "/10");
+        mVoteAverageTextView.setText(voteAverageText);
 
         ImageView mPosterImageView = (ImageView) findViewById(R.id.iv_details_poster);
         Picasso.with(this).load(mSelectedMovie.image_url).into(mPosterImageView);
@@ -108,6 +113,7 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
         checkIfMovieIsFavourited();
 
         loadMovieTrailers();
+        loadMovieReviews();
     }
 
     @Override
@@ -196,7 +202,7 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
                 null,
                 MoviesContract.MoviesEntry.COLUMN_TITLE);
 
-        while (cursor.moveToNext()) {
+        while (cursor.moveToNext() && cursor != null) {
             String name = cursor.getString(cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_TITLE));
             if (name.equals(mSelectedMovie.title))
                 return cursor;
@@ -210,11 +216,6 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
     }
 
     private class FetchTrailersTask extends AsyncTask<String, Void, Trailer[]> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
 
         @Override
         protected Trailer[] doInBackground(String... params) {
@@ -241,9 +242,7 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
         @Override
         protected void onPostExecute(Trailer[] trailersData) {
             if (trailersData != null) {
-                mScrollView.invalidate();
                 mTrailerAdapter.setmTrailersData(trailersData);
-                mScrollView.requestLayout();
             }
         }
     }
@@ -253,7 +252,7 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
         watchYoutubeVideo(trailer.key);
     }
 
-    public void watchYoutubeVideo(String id){
+    private void watchYoutubeVideo(String id){
         Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
         Intent webIntent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse("http://www.youtube.com/watch?v=" + id));
@@ -262,5 +261,48 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
         } catch (ActivityNotFoundException ex) {
             startActivity(webIntent);
         }
+    }
+
+    private void loadMovieReviews() {
+        new FetchReviewsTask().execute(mSelectedMovie.movie_id);
+    }
+
+    private class FetchReviewsTask extends AsyncTask<String, Void, Review[]> {
+
+        @Override
+        protected Review[] doInBackground(String... params) {
+
+            /* Must provide a sort type */
+            if (params.length == 0) {
+                return null;
+            }
+
+            String movieId = params[0];
+            URL reviewsRequestUrl = NetworkUtils.buildReviewUrl(movieId);
+
+            try {
+                String reviewsResponseJSON = NetworkUtils.getResponseFromHttpUrl(reviewsRequestUrl);
+
+                return ReviewsJsonUtils.getReviewsFromJSON(reviewsResponseJSON);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Review[] reviewsData) {
+            if (reviewsData != null) {
+                mReviewAdapter.setReviewsData(reviewsData);
+            }
+        }
+    }
+
+    @Override
+    public void onClick(Review review) {
+        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse(review.url));
+        startActivity(webIntent);
     }
 }

@@ -25,8 +25,8 @@
                 android:layout_marginTop="@dimen/medium_vertical_spacing"
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/default_padding"
-                android:paddingLeft="@dimen/default_padding"
-                android:paddingRight="@dimen/medium_vertical_spacing"
+                android:paddingStart="@dimen/default_padding"
+                android:paddingEnd="@dimen/medium_vertical_spacing"
                 android:paddingTop="@dimen/default_padding">
 
                 <ImageView
@@ -48,7 +48,7 @@
                     android:id="@+id/tv_details_release_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="left"
+                    android:layout_gravity="start"
                     android:layout_marginTop="@dimen/small_vertical_spacing"
                     android:paddingTop="18dp"
                     android:text="@string/default_movie_release_date"
@@ -58,7 +58,7 @@
                     android:id="@+id/tv_details_vote_average"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="left"
+                    android:layout_gravity="start"
                     android:text="@string/default_movie_vote_average"
                     android:textAlignment="center"
                     android:textSize="@dimen/h2" />
@@ -71,8 +71,8 @@
             android:id="@+id/tv_details_synopsis"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginLeft="@dimen/large_vertical_spacing"
+            android:layout_gravity="start"
+            android:layout_marginStart="@dimen/large_vertical_spacing"
             android:layout_marginTop="@dimen/medium_vertical_spacing"
             android:text="@string/default_movie_synopsis"
             android:textSize="@dimen/h2" />
@@ -86,8 +86,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginLeft="@dimen/large_vertical_spacing"
+            android:layout_gravity="start"
+            android:layout_marginStart="@dimen/large_vertical_spacing"
             android:layout_marginTop="@dimen/medium_vertical_spacing"
             android:text="@string/movie_trailer_title"
             android:textSize="@dimen/h1" />
@@ -103,9 +103,31 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/small_vertical_spacing"
             android:paddingLeft="@dimen/large_vertical_spacing"
-            android:paddingRight="@dimen/large_vertical_spacing"
+            android:paddingRight="@dimen/large_vertical_spacing" />
+        </RelativeLayout>
 
-            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="@dimen/large_vertical_spacing"
+            android:layout_marginTop="@dimen/medium_vertical_spacing"
+            android:text="@string/movie_review_title"
+            android:textSize="@dimen/h1" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/large_vertical_spacing"
+            >
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_reviews"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_vertical_spacing"
+                android:paddingLeft="@dimen/large_vertical_spacing"
+                android:paddingRight="@dimen/large_vertical_spacing" />
         </RelativeLayout>
 
     </LinearLayout>
