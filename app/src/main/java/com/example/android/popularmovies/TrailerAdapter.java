@@ -7,6 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 /**
  * Created by Lawrey on 26/9/17.
@@ -27,13 +30,11 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
     }
 
     public class TrailerAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private final TextView mTrailerTextView;
+        @BindView(R.id.tv_trailer_name) TextView mTrailerTextView;
 
         public TrailerAdapterViewHolder(View view) {
             super(view);
-
-            mTrailerTextView = view.findViewById(R.id.tv_trailer_name);
-
+            ButterKnife.bind(this, view);
             view.setOnClickListener(this);
         }
 

@@ -3,10 +3,14 @@ package com.example.android.popularmovies;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,27 +22,34 @@ import com.example.android.popularmovies.utilities.MoviesJsonUtils;
 import com.example.android.popularmovies.utilities.NetworkUtils;
 import com.example.android.popularmovies.utilities.SortType;
 
+import org.parceler.Parcels;
+
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+import static android.R.id.list;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
 
-    private RecyclerView mRecyclerView;
+    @BindView(R.id.rv_movies) RecyclerView mRecyclerView;
+    @BindView(R.id.tv_error_message_display) TextView mErrorMessageDisplay;
+    @BindView(R.id.pb_loading_indicator) ProgressBar mLoadingIndicator;
+
     private MovieAdapter mMovieAdapter;
 
-    private TextView mErrorMessageDisplay;
-    private ProgressBar mLoadingIndicator;
-
     private SortType sortType;
+
+    public static final String LIFECYCLE_CALLBACKS_TEXT_KEY = "callbacks1";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.rv_movies);
-
-        mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
+        ButterKnife.bind(this);
 
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 2);
         mRecyclerView.setLayoutManager(layoutManager);
@@ -48,13 +59,20 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         mRecyclerView.setAdapter(mMovieAdapter);
 
-        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
-
         sortType = SortType.MOSTPOPULAR;
 
         setTitle(getText(R.string.most_popular));
 
-        loadMoviesData();
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(LIFECYCLE_CALLBACKS_TEXT_KEY)) {
+                Parcelable listParcelable = savedInstanceState.getParcelable(LIFECYCLE_CALLBACKS_TEXT_KEY);
+                ArrayList<Movie> allPreviousLifecycleCallbacks = Parcels.unwrap(listParcelable);
+                mMovieAdapter.setMoviesData(allPreviousLifecycleCallbacks.toArray(new Movie[allPreviousLifecycleCallbacks.size()]));
+            }
+        }else{
+            loadMoviesData();
+        }
+
     }
 
     @Override
@@ -67,9 +85,18 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Movie[] lifecycleDisplayMoviesContents = mMovieAdapter.getMoviesData();
+        Parcelable listParcelable = Parcels.wrap(new ArrayList<>(Arrays.asList(lifecycleDisplayMoviesContents)));
+
+        outState.putParcelable(LIFECYCLE_CALLBACKS_TEXT_KEY, listParcelable);
+    }
+
     private void loadMoviesData() {
         showMoviesDataView();
-
         new FetchMoviesTask().execute(sortType);
     }
 
@@ -169,10 +196,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     @Override
     public void onClick(Movie movie) {
-        Intent i = new Intent(this, MovieDetails.class);
-        i.putExtra("Movie", movie);
+        Intent intent = new Intent(this, MovieDetails.class);
+        intent.putExtra("Movie", Parcels.wrap(movie));
 
-        startActivity(i);
+        startActivity(intent);
     }
 
     private Movie[] getFavouritedMovies() {

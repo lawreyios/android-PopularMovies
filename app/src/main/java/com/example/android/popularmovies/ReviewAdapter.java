@@ -7,6 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by Lawrey on 26/9/17.
  */
@@ -28,15 +31,12 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewAdap
 
     public class ReviewAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private final TextView mAuthorTextView;
-        private final TextView mContentTextView;
+        @BindView(R.id.tv_author) TextView mAuthorTextView;
+        @BindView(R.id.tv_content) TextView mContentTextView;
 
         public ReviewAdapterViewHolder(View view) {
             super(view);
-
-            mAuthorTextView = view.findViewById(R.id.tv_author);
-            mContentTextView = view.findViewById(R.id.tv_content);
-
+            ButterKnife.bind(this, view);
             view.setOnClickListener(this);
         }
 

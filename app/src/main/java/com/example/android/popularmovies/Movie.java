@@ -1,16 +1,19 @@
 package com.example.android.popularmovies;
 
-import java.io.Serializable;
+@org.parceler.Parcel
+public class Movie {
 
-@SuppressWarnings("DefaultFileTemplate")
+    // fields must be package private
+    String title;
+    double vote_average;
+    String image_url;
+    String release_date;
+    String plot_synopsis;
+    String movie_id;
 
-public class Movie implements Serializable {
-    final String title;
-    final double vote_average;
-    final String image_url;
-    final String release_date;
-    final String plot_synopsis;
-    final String movie_id;
+    // empty constructor needed by the Parceler library
+    public Movie() {
+    }
 
     public Movie(String title, double vote_average, String image_url, String release_date, String plot_synopsis, String movie_id) {
         this.title = title;

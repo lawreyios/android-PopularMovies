@@ -19,43 +19,46 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.android.popularmovies.data.MoviesContract;
 import com.example.android.popularmovies.utilities.NetworkUtils;
 import com.example.android.popularmovies.utilities.ReviewsJsonUtils;
 import com.example.android.popularmovies.utilities.TrailersJsonUtils;
-import com.squareup.picasso.Picasso;
+
+import org.parceler.Parcels;
 
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Date;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MovieDetails extends AppCompatActivity
         implements TrailerAdapter.TrailerAdapterOnClickHandler, ReviewAdapter.ReviewAdapterOnClickHandler {
 
     private static final String TAG = MovieDetails.class.getSimpleName();
 
-    private Movie mSelectedMovie;
+    Movie mSelectedMovie;
 
     private boolean mIsFavourited = false;
     private int mFavouriteIcon;
 
-    private RecyclerView mTrailersRecyclerView;
+    @BindView(R.id.rv_trailers) RecyclerView mTrailersRecyclerView;
+    @BindView(R.id.rv_reviews) RecyclerView mReviewsRecyclerView;
+    @BindView(R.id.tv_details_release_date) TextView mReleaseDateTextView;
+    @BindView(R.id.tv_details_vote_average) TextView mVoteAverageTextView;
+    @BindView(R.id.iv_details_poster) ImageView mPosterImageView;
+    @BindView(R.id.tv_details_synopsis) TextView mSynopsisTextView;
+
     private TrailerAdapter mTrailerAdapter;
-
-    private RecyclerView mReviewsRecyclerView;
     private ReviewAdapter mReviewAdapter;
-
-    private ScrollView mScrollView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
-
-        mScrollView = (ScrollView) findViewById(R.id.sv_movie_details);
-
-        mTrailersRecyclerView = (RecyclerView) findViewById(R.id.rv_trailers);
-        mReviewsRecyclerView = (RecyclerView) findViewById(R.id.rv_reviews);
+        ButterKnife.bind(this);
 
         LinearLayoutManager trailersLayoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -72,10 +75,9 @@ public class MovieDetails extends AppCompatActivity
         mTrailersRecyclerView.setAdapter(mTrailerAdapter);
         mReviewsRecyclerView.setAdapter(mReviewAdapter);
 
-        mSelectedMovie = (Movie) getIntent().getSerializableExtra("Movie");
+        mSelectedMovie = Parcels.unwrap(getIntent().getParcelableExtra("Movie"));
         setTitle(mSelectedMovie.title);
 
-        TextView mReleaseDateTextView = (TextView) findViewById(R.id.tv_details_release_date);
         String releaseDateText = mSelectedMovie.release_date;
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -97,15 +99,12 @@ public class MovieDetails extends AppCompatActivity
         releaseDateText = this.getString(R.string.movie_release_date, releaseDateText);
         mReleaseDateTextView.setText(releaseDateText);
 
-        TextView mVoteAverageTextView = (TextView) findViewById(R.id.tv_details_vote_average);
         String voteAverage = String.valueOf(mSelectedMovie.vote_average);
         String voteAverageText = this.getString(R.string.movie_average_vote, voteAverage);
         mVoteAverageTextView.setText(voteAverageText);
 
-        ImageView mPosterImageView = (ImageView) findViewById(R.id.iv_details_poster);
-        Picasso.with(this).load(mSelectedMovie.image_url).into(mPosterImageView);
+        Glide.with(this).load(mSelectedMovie.image_url).into(mPosterImageView);
 
-        TextView mSynopsisTextView = (TextView) findViewById(R.id.tv_details_synopsis);
         mSynopsisTextView.setText(mSelectedMovie.plot_synopsis);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -114,6 +113,7 @@ public class MovieDetails extends AppCompatActivity
 
         loadMovieTrailers();
         loadMovieReviews();
+
     }
 
     @Override

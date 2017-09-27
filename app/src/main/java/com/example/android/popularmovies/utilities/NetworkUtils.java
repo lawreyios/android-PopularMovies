@@ -23,7 +23,7 @@ public final class NetworkUtils {
     private final static String API_KEY_PARAM = "api_key";
 
     //TODO: Add your own API_KEY from MoviesDB
-    private final static String API_KEY = "API_KEY";
+    private final static String API_KEY = "ad4ffb49ab5d292de1cd561c5ff9fb71";
 
     public static URL buildUrl(SortType sortType) {
         String path = sortType == SortType.MOSTPOPULAR ? POPULAR_PATH : TOP_RATED_PATH;

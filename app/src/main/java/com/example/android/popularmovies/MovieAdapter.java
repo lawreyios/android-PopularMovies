@@ -7,7 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
 
@@ -24,13 +27,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     }
 
     public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private final ImageView posterImageView;
+        @BindView(R.id.grid_item_image) ImageView posterImageView;
 
         public MovieAdapterViewHolder(View view) {
             super(view);
-
-            posterImageView = view.findViewById(R.id.grid_item_image);
-
+            ButterKnife.bind(this, view);
             view.setOnClickListener(this);
         }
 
@@ -56,8 +57,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder viewHolder, int i) {
         Movie movie = mMoviesData[i];
-
-        Picasso.with(viewHolder.itemView.getContext()).load(movie.image_url).into(viewHolder.posterImageView);
+        Glide.with(viewHolder.itemView.getContext()).load(movie.image_url).into(viewHolder.posterImageView);
     }
 
     @Override
@@ -69,6 +69,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     public void setMoviesData(Movie[] moviesData) {
         mMoviesData = moviesData;
         notifyDataSetChanged();
+    }
+
+    public Movie[] getMoviesData() {
+        return mMoviesData;
     }
 
 }
