@@ -69,8 +69,12 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
         return mTrailersData.length;
     }
 
-    public void setmTrailersData(Trailer[] trailersData) {
+    public void setTrailersData(Trailer[] trailersData) {
         mTrailersData = trailersData;
         notifyDataSetChanged();
+    }
+
+    public Trailer[] getTrailersData() {
+        return mTrailersData;
     }
 }

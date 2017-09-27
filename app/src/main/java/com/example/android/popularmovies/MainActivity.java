@@ -2,15 +2,11 @@ package com.example.android.popularmovies;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.AsyncTask;
-import android.os.Parcel;
 import android.os.Parcelable;
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,20 +14,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.android.popularmovies.data.MoviesContract;
-import com.example.android.popularmovies.utilities.MoviesJsonUtils;
-import com.example.android.popularmovies.utilities.NetworkUtils;
 import com.example.android.popularmovies.utilities.SortType;
 
 import org.parceler.Parcels;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static android.R.id.list;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
 
@@ -39,11 +30,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     @BindView(R.id.tv_error_message_display) TextView mErrorMessageDisplay;
     @BindView(R.id.pb_loading_indicator) ProgressBar mLoadingIndicator;
 
-    private MovieAdapter mMovieAdapter;
+    MovieAdapter mMovieAdapter;
 
     private SortType sortType;
 
-    public static final String LIFECYCLE_CALLBACKS_TEXT_KEY = "callbacks1";
+    public static final String LIFECYCLE_CALLBACKS_TEXT_KEY = "callbacks";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,9 +86,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         outState.putParcelable(LIFECYCLE_CALLBACKS_TEXT_KEY, listParcelable);
     }
 
-    private void loadMoviesData() {
+    public void loadMoviesData() {
         showMoviesDataView();
-        new FetchMoviesTask().execute(sortType);
+        new FetchMoviesTask(this).execute(sortType);
     }
 
     @Override
@@ -138,60 +129,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         return super.onOptionsItemSelected(item);
     }
 
-    private class FetchMoviesTask extends AsyncTask<SortType, Void, Movie[]> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mLoadingIndicator.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected Movie[] doInBackground(SortType... params) {
-
-            /* Must provide a sort type */
-            if (params.length == 0) {
-                return null;
-            }
-
-            SortType sortType = params[0];
-            URL moviesRequestUrl = NetworkUtils.buildUrl(sortType);
-
-            try {
-                String moviesResponseJSON = NetworkUtils.getResponseFromHttpUrl(moviesRequestUrl);
-
-                return MoviesJsonUtils.getMoviesFromJSON(moviesResponseJSON);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Movie[] moviesData) {
-            mLoadingIndicator.setVisibility(View.INVISIBLE);
-            if (moviesData != null) {
-                showMoviesDataView();
-                mMovieAdapter.setMoviesData(moviesData);
-            } else {
-                showErrorMessage();
-            }
-        }
-    }
-
-    private void showMoviesDataView() {
-        /* First, make sure the error is invisible */
+    public void showMoviesDataView() {
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
-        /* Then, make sure the weather data is visible */
         mRecyclerView.setVisibility(View.VISIBLE);
-    }
-
-    private void showErrorMessage() {
-        /* First, hide the currently visible data */
-        mRecyclerView.setVisibility(View.INVISIBLE);
-        /* Then, show the error */
-        mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
 
     @Override

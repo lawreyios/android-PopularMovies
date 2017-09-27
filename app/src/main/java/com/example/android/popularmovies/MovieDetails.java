@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
-import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,20 +15,20 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.android.popularmovies.data.MoviesContract;
-import com.example.android.popularmovies.utilities.NetworkUtils;
-import com.example.android.popularmovies.utilities.ReviewsJsonUtils;
-import com.example.android.popularmovies.utilities.TrailersJsonUtils;
 
 import org.parceler.Parcels;
 
-import java.net.URL;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import butterknife.BindView;
@@ -44,15 +44,25 @@ public class MovieDetails extends AppCompatActivity
     private boolean mIsFavourited = false;
     private int mFavouriteIcon;
 
+    @BindView(R.id.sv_movie_details)
+    ScrollView mScrollView;
     @BindView(R.id.rv_trailers) RecyclerView mTrailersRecyclerView;
     @BindView(R.id.rv_reviews) RecyclerView mReviewsRecyclerView;
     @BindView(R.id.tv_details_release_date) TextView mReleaseDateTextView;
     @BindView(R.id.tv_details_vote_average) TextView mVoteAverageTextView;
     @BindView(R.id.iv_details_poster) ImageView mPosterImageView;
     @BindView(R.id.tv_details_synopsis) TextView mSynopsisTextView;
+    @BindView(R.id.pb_loading_indicator)
+    ProgressBar mLoadingIndicator;
 
-    private TrailerAdapter mTrailerAdapter;
-    private ReviewAdapter mReviewAdapter;
+    TrailerAdapter mTrailerAdapter;
+    ReviewAdapter mReviewAdapter;
+
+    boolean isFetchReviewsCallFinished = false;
+    boolean isFetchTrailersCallFinished = false;
+
+    public static final String LIFECYCLE_CALLBACKS_TRAILERS_TEXT_KEY = "callbacksForTrailers";
+    public static final String LIFECYCLE_CALLBACKS_REVIEWS_TEXT_KEY = "callbacksForReviews";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,9 +121,47 @@ public class MovieDetails extends AppCompatActivity
 
         checkIfMovieIsFavourited();
 
-        loadMovieTrailers();
-        loadMovieReviews();
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(LIFECYCLE_CALLBACKS_TRAILERS_TEXT_KEY)) {
+                Parcelable listParcelable = savedInstanceState.getParcelable(LIFECYCLE_CALLBACKS_TRAILERS_TEXT_KEY);
+                ArrayList<Trailer> previousData = Parcels.unwrap(listParcelable);
+                mTrailerAdapter.setTrailersData(previousData.toArray(new Trailer[previousData.size()]));
+                isFetchTrailersCallFinished = true;
+            }else{
+                loadMovieTrailers();
+            }
 
+            if (savedInstanceState.containsKey(LIFECYCLE_CALLBACKS_REVIEWS_TEXT_KEY)) {
+                Parcelable listParcelable = savedInstanceState.getParcelable(LIFECYCLE_CALLBACKS_REVIEWS_TEXT_KEY);
+                ArrayList<Review> previousData = Parcels.unwrap(listParcelable);
+                mReviewAdapter.setReviewsData(previousData.toArray(new Review[previousData.size()]));
+                isFetchReviewsCallFinished = true;
+            }else{
+                loadMovieReviews();
+            }
+
+            updateView();
+        }else{
+            loadMovieTrailers();
+            loadMovieReviews();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Trailer[] lifecycleDisplayTrailersContents = mTrailerAdapter.getTrailersData();
+        Parcelable trailersListParcelable = Parcels.wrap(new ArrayList<>(Arrays.asList(lifecycleDisplayTrailersContents)));
+
+        outState.putParcelable(LIFECYCLE_CALLBACKS_TRAILERS_TEXT_KEY, trailersListParcelable);
+
+        Review[] lifecycleDisplayReviewsContents = mReviewAdapter.getReviewsData();
+        Parcelable reviewsListParcelable = Parcels.wrap(new ArrayList<>(Arrays.asList(lifecycleDisplayReviewsContents)));
+
+        outState.putParcelable(LIFECYCLE_CALLBACKS_REVIEWS_TEXT_KEY, reviewsListParcelable);
+
+        Log.v("STATE SAVED!!", "STATE SAVED!!");
     }
 
     @Override
@@ -212,39 +260,8 @@ public class MovieDetails extends AppCompatActivity
     }
 
     private void loadMovieTrailers() {
-        new FetchTrailersTask().execute(mSelectedMovie.movie_id);
-    }
-
-    private class FetchTrailersTask extends AsyncTask<String, Void, Trailer[]> {
-
-        @Override
-        protected Trailer[] doInBackground(String... params) {
-
-            /* Must provide a sort type */
-            if (params.length == 0) {
-                return null;
-            }
-
-            String movieId = params[0];
-            URL trailersRequestUrl = NetworkUtils.buildVideoUrl(movieId);
-
-            try {
-                String trailersResponseJSON = NetworkUtils.getResponseFromHttpUrl(trailersRequestUrl);
-
-                return TrailersJsonUtils.getTrailersFromJSON(trailersResponseJSON);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Trailer[] trailersData) {
-            if (trailersData != null) {
-                mTrailerAdapter.setmTrailersData(trailersData);
-            }
-        }
+        isFetchTrailersCallFinished = false;
+        new FetchTrailersTask(this).execute(mSelectedMovie.movie_id);
     }
 
     @Override
@@ -264,39 +281,8 @@ public class MovieDetails extends AppCompatActivity
     }
 
     private void loadMovieReviews() {
-        new FetchReviewsTask().execute(mSelectedMovie.movie_id);
-    }
-
-    private class FetchReviewsTask extends AsyncTask<String, Void, Review[]> {
-
-        @Override
-        protected Review[] doInBackground(String... params) {
-
-            /* Must provide a sort type */
-            if (params.length == 0) {
-                return null;
-            }
-
-            String movieId = params[0];
-            URL reviewsRequestUrl = NetworkUtils.buildReviewUrl(movieId);
-
-            try {
-                String reviewsResponseJSON = NetworkUtils.getResponseFromHttpUrl(reviewsRequestUrl);
-
-                return ReviewsJsonUtils.getReviewsFromJSON(reviewsResponseJSON);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Review[] reviewsData) {
-            if (reviewsData != null) {
-                mReviewAdapter.setReviewsData(reviewsData);
-            }
-        }
+        isFetchReviewsCallFinished = false;
+        new FetchReviewsTask(this).execute(mSelectedMovie.movie_id);
     }
 
     @Override
@@ -304,5 +290,15 @@ public class MovieDetails extends AppCompatActivity
         Intent webIntent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse(review.url));
         startActivity(webIntent);
+    }
+
+    public void updateView() {
+        if (isFetchReviewsCallFinished && isFetchTrailersCallFinished) {
+            mScrollView.setVisibility(View.VISIBLE);
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
+        }else{
+            mScrollView.setVisibility(View.INVISIBLE);
+            mLoadingIndicator.setVisibility(View.VISIBLE);
+        }
     }
 }
